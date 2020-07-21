@@ -1,0 +1,5 @@
+#Don't track the contents of these folders
+node_modules/
+venv/
+
+subscriber_list.csv
