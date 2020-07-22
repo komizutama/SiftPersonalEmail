@@ -1,5 +1,5 @@
 import csv
-import pyyaml
+import yaml
 
 trimmed_list = []
 
@@ -18,9 +18,8 @@ for subscriber in trimmed_list:
     subscriber['Email'] = subscriber.pop('\xef\xbb\xbfEmail')
     print subscriber
 
-with open('trimmed_list.csv'), mode='w') as csv_file:
-	fieldnames = ['Subscribed', 'Clicked', 'Opened', 'Sent', 'Email']
-	writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-
-	writer.writeheader()
-	writer.writerows(trimmed_list)
+with open('trimmed_list.csv', mode='w') as csv_file:
+    fieldnames = ['Subscribed', 'Clicked', 'Opened', 'Sent', 'Email']
+    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+    writer.writeheader()
+    writer.writerows(trimmed_list)
