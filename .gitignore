@@ -4,3 +4,5 @@ venv/
 
 subscriber_list.csv
 trimmed_list.csv
+discard_list.csv
+jp_list.csv
