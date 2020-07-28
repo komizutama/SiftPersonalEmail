@@ -5,59 +5,40 @@ trimmed_list = []
 discarded_list = []
 jp_list = []
 
+def CorrectEmailHeaders(*email_lists):
+    for email_list in email_lists:
+        for subscriber in email_list:
+            subscriber['Email'] = subscriber.pop('\xef\xbb\xbfEmail')
+
+
+def OutputLists(**email_lists):
+    for csv_name, email_list in email_lists.items():
+        with open(csv_name + '.csv', mode='w') as csv_file:
+            fieldnames = ['Subscribed', 'Clicked', 'Opened', 'Sent', 'Email']
+            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(email_list)
 
 
 with open('personal_email_domains.yaml') as f:
-    personal_email_domains = set(yaml.load(f, Loader=yaml.FullLoader))
-    print personal_email_domains
+    personal_email_domains = yaml.load(f, Loader=yaml.FullLoader)
 
 with open('domains2ignore.yaml') as f:
     unwanted_tlds = yaml.load(f, Loader = yaml.FullLoader)
-    print unwanted_tlds
 
 with open('subscriber_list.csv', mode='r') as csv_file:
     csv_reader = csv.DictReader(csv_file)
     line_count = 0
     for row in csv_reader:
-        domain_name = row['\xef\xbb\xbfEmail'].split('@')[1]
-        lower_domain_name = domain_name.lower()
-        tld = lower_domain_name.split('.')
+        domain_bits = row['\xef\xbb\xbfEmail'].split('@')[1].lower().split('.')
 
-        if tld[-1] == 'jp':
+        if domain_bits[-1] == 'jp':
             jp_list.append(row)
-            print "added to JP"
-        elif set(tld).intersection(personal_email_domains) or tld[-1] in unwanted_tlds:
+        elif set(domain_bits).intersection(set(personal_email_domains)) or domain_bits[-1] in unwanted_tlds:
             discarded_list.append(row)
-            print "added to discard"
         else:
             trimmed_list.append(row)
-            print "added to main"
 
 
-
-for subscriber in trimmed_list:
-    subscriber['Email'] = subscriber.pop('\xef\xbb\xbfEmail')
-
-for subscriber in discarded_list:
-    subscriber['Email'] = subscriber.pop('\xef\xbb\xbfEmail')
-
-for subscriber in jp_list:
-    subscriber['Email'] = subscriber.pop('\xef\xbb\xbfEmail')
-
-with open('trimmed_list.csv', mode='w') as csv_file:
-    fieldnames = ['Subscribed', 'Clicked', 'Opened', 'Sent', 'Email']
-    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-    writer.writeheader()
-    writer.writerows(trimmed_list)
-
-with open('discard_list.csv', mode='w') as csv_file:
-    fieldnames = ['Subscribed', 'Clicked', 'Opened', 'Sent', 'Email']
-    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-    writer.writeheader()
-    writer.writerows(discarded_list)
-
-with open('jp_list.csv', mode='w') as csv_file:
-    fieldnames = ['Subscribed', 'Clicked', 'Opened', 'Sent', 'Email']
-    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-    writer.writeheader()
-    writer.writerows(jp_list)
+CorrectEmailHeaders(trimmed_list, discarded_list, jp_list)
+OutputLists(sorted_email_addresses = trimmed_list, discarded_email_addresses = discarded_list, Japanese_email_addresses = jp_list)

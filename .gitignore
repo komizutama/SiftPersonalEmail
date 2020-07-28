@@ -1,8 +1,17 @@
 #Don't track the contents of these folders
 node_modules/
 venv/
+.ipynb_checkpoints/
 
 subscriber_list.csv
 trimmed_list.csv
 discard_list.csv
+discarded_list.csv
 jp_list.csv
+.DS_Store
+Untitled.ipynb
+Untitled1.ipynb
+
+sorted_email_addresses.csv
+discarded_email_addresses.csv
+Japanese_email_addresses.csv
